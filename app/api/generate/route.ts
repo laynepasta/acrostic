@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenAI } from '@google/genai';
 
 const SYSTEM_PROMPT =
   'You write mnemonic sentences (acrostics) for ordered lists of things people need to memorize. ' +
@@ -28,33 +28,37 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Add at least two items.' }, { status: 400 });
   }
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
-      { error: 'Server is missing an Anthropic API key.' },
+      { error: 'Server is missing a Gemini API key.' },
       { status: 500 }
     );
   }
+
+  // Overridable via an env var in case Google renames or retires this model later,
+  // without needing a code change and redeploy. Check
+  // https://ai.google.dev/gemini-api/docs/models for the current recommended
+  // lightweight, free-tier model if this ever stops working.
+  const model = process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
 
   const userMessage =
     `Topic: ${topic || '(untitled)'}\nItems in order:\n` +
     items.map((it: string, i: number) => `${i + 1}. ${it}`).join('\n');
 
   try {
-    const anthropic = new Anthropic({ apiKey });
+    const ai = new GoogleGenAI({ apiKey });
 
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-5',
-      max_tokens: 1000,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: 'user', content: userMessage }]
+    const response = await ai.models.generateContent({
+      model,
+      contents: userMessage,
+      config: {
+        systemInstruction: SYSTEM_PROMPT,
+        responseMimeType: 'application/json'
+      }
     });
 
-    const textBlock = response.content.find((b) => b.type === 'text') as
-      | { type: 'text'; text: string }
-      | undefined;
-
-    const raw = textBlock ? textBlock.text : '';
+    const raw = response.text ?? '';
     const clean = raw.replace(/^```json\s*|^```\s*|```$/g, '').trim();
     const parsed = JSON.parse(clean);
 
