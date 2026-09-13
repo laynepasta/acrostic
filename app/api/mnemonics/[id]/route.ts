@@ -8,6 +8,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     if (error) throw error;
     return NextResponse.json({ ok: true });
   } catch (err) {
+    console.error('DELETE /api/mnemonics/[id] failed:', err);
     return NextResponse.json({ error: 'Could not remove that mnemonic.' }, { status: 500 });
   }
 }
