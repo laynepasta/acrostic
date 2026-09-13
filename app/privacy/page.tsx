@@ -18,11 +18,19 @@ export default function Privacy() {
 
       <h2>What Acrostic collects</h2>
       <p>
-        The topic and items you type in are sent to Anthropic&rsquo;s API to generate a mnemonic.
-        If you choose to save a mnemonic, the sentence, its tone label, and the topic you gave it
-        are stored in the app&rsquo;s database so you can see it again later. Acrostic does not
-        currently ask for your name, email, or any account information, and does not use
-        cookies or analytics trackers.
+        The topic and items you type in are sent to Google&rsquo;s Gemini API to generate a
+        mnemonic. If you choose to save a mnemonic, the sentence, its tone label, and the topic
+        you gave it are stored in the app&rsquo;s database so you can see it again later.
+        Acrostic does not currently ask for your name, email, or any account information, and
+        does not use cookies or analytics trackers.
+      </p>
+
+      <h2>A note on the free tier</h2>
+      <p>
+        This app runs on Gemini&rsquo;s free tier. On that tier, Google&rsquo;s terms allow
+        prompts and responses to be used to improve their products; that stops being true if
+        this project ever moves to a paid Gemini tier. Worth knowing since it&rsquo;s a real
+        difference from services that never do that, paid or not.
       </p>
 
       <h2>How it&rsquo;s used</h2>
@@ -33,9 +41,9 @@ export default function Privacy() {
 
       <h2>Third parties</h2>
       <p>
-        Generation requests are processed by Anthropic. Saved data is stored with Supabase.
-        Both providers have their own privacy practices, worth linking to here once you&rsquo;ve
-        reviewed them.
+        Generation requests are processed by Google (Gemini API). Saved data is stored with
+        Supabase. Both providers have their own privacy practices, worth linking to here once
+        you&rsquo;ve reviewed them.
       </p>
 
       <h2>Questions</h2>
