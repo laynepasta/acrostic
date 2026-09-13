@@ -7,7 +7,7 @@ export default function Terms() {
     <div className="legal-page">
       <h1>Terms and Conditions</h1>
 
-      <p>Effective date: [add the date you publish this]</p>
+      <p>Effective date: Sep 13, 2026</p>
 
       <p>
         This is a genuine starting set of terms reflecting what Acrostic actually does today. It
