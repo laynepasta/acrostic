@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 type Mnemonic = { sentence: string; tone?: string; note?: string };
@@ -46,8 +46,27 @@ export default function Home() {
   const [statusMsg, setStatusMsg] = useState('');
   const [statusError, setStatusError] = useState(false);
   const [results, setResults] = useState<Mnemonic[]>([]);
+  const [theme, setThemeState] = useState<'dark' | 'light'>('dark');
 
   const items = itemsText.split('\n').map((s) => s.trim()).filter(Boolean);
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem('acrostic-theme');
+    const initial =
+      stored === 'light' || stored === 'dark'
+        ? stored
+        : window.matchMedia('(prefers-color-scheme: light)').matches
+        ? 'light'
+        : 'dark';
+    setThemeState(initial);
+    document.documentElement.setAttribute('data-theme', initial);
+  }, []);
+
+  function setTheme(next: 'dark' | 'light') {
+    setThemeState(next);
+    document.documentElement.setAttribute('data-theme', next);
+    window.localStorage.setItem('acrostic-theme', next);
+  }
 
   function useExample(key: string) {
     const ex = EXAMPLES[key];
@@ -184,7 +203,23 @@ export default function Home() {
       )}
 
       <footer className="legal">
-        <Link href="/privacy">Privacy</Link> &nbsp;&middot;&nbsp; <Link href="/terms">Terms</Link>
+        <div className="theme-toggle">
+          <button
+            className={theme === 'dark' ? 'active' : ''}
+            onClick={() => setTheme('dark')}
+          >
+            Chalkboard
+          </button>
+          <button
+            className={theme === 'light' ? 'active' : ''}
+            onClick={() => setTheme('light')}
+          >
+            Paper
+          </button>
+        </div>
+        <div>
+          <Link href="/privacy">Privacy</Link> &nbsp;&middot;&nbsp; <Link href="/terms">Terms</Link>
+        </div>
       </footer>
     </div>
   );
