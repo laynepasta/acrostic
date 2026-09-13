@@ -68,6 +68,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(parsed);
   } catch (err) {
+    console.error('POST /api/generate failed:', err);
     return NextResponse.json(
       { error: "Couldn't generate a mnemonic just now." },
       { status: 502 }
