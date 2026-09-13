@@ -181,7 +181,7 @@ button.text:hover::after { background: var(--candidate-color, var(--accent)); op
   to { opacity: 1; transform: none; }
 }
 
-section.results, section.saved { margin-top: 48px; }
+section.results { margin-top: 48px; }
 
 h2 {
   font-family: 'Inter', sans-serif;
@@ -243,26 +243,6 @@ h2 {
 .plain-items { font-size: 13px; color: var(--muted); margin: 0 0 14px; }
 
 .candidate-actions { display: flex; gap: 16px; }
-
-.saved-item {
-  padding: 16px 0 16px 14px;
-  border-left: 3px solid var(--candidate-color, var(--line));
-  margin-bottom: 4px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  opacity: 1;
-  transform: none;
-  transition: opacity 0.25s ease, transform 0.25s ease;
-}
-
-.saved-item.removing { opacity: 0; transform: translateX(6px); }
-
-.saved-item .sentence { font-size: 18px; margin-bottom: 4px; }
-.saved-item .meta { font-size: 12px; color: var(--muted); }
-
-.empty { color: var(--muted); font-size: 15px; padding: 24px 0; border-top: 1px solid var(--line); }
 
 footer.legal {
   margin-top: 64px;
