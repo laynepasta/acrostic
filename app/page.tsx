@@ -1,10 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 
 type Mnemonic = { sentence: string; tone?: string; note?: string };
-type SavedMnemonic = { id: string; topic: string | null; sentence: string; tone: string | null; created_at: string };
 
 const EXAMPLES: Record<string, { topic: string; items: string[] }> = {
   krebs: {
@@ -25,14 +24,12 @@ const EXAMPLES: Record<string, { topic: string; items: string[] }> = {
   }
 };
 
+const PALETTE = ['var(--accent)', 'var(--sage)', 'var(--slate)', 'var(--rose)'];
+
 function firstLetter(str: string) {
   const m = str.match(/[a-zA-Z]/);
   return m ? m[0].toUpperCase() : '?';
 }
-
-// A fixed, deterministic palette so each option (and each saved entry) gets
-// a consistent accent color by position, rather than a random or clashing one.
-const PALETTE = ['var(--accent)', 'var(--sage)', 'var(--slate)', 'var(--rose)'];
 
 function ThinkingDots() {
   return (
@@ -49,27 +46,8 @@ export default function Home() {
   const [statusMsg, setStatusMsg] = useState('');
   const [statusError, setStatusError] = useState(false);
   const [results, setResults] = useState<Mnemonic[]>([]);
-  const [saved, setSaved] = useState<SavedMnemonic[]>([]);
-  const [savedLoaded, setSavedLoaded] = useState(false);
-  const [removingIds, setRemovingIds] = useState<Set<string>>(new Set());
 
   const items = itemsText.split('\n').map((s) => s.trim()).filter(Boolean);
-
-  useEffect(() => {
-    loadSaved();
-  }, []);
-
-  async function loadSaved() {
-    try {
-      const res = await fetch('/api/mnemonics');
-      const data = await res.json();
-      setSaved(data.mnemonics || []);
-    } catch {
-      setSaved([]);
-    } finally {
-      setSavedLoaded(true);
-    }
-  }
 
   function useExample(key: string) {
     const ex = EXAMPLES[key];
@@ -108,45 +86,6 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }
-
-  async function saveMnemonic(m: Mnemonic) {
-    try {
-      const res = await fetch('/api/mnemonics', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic, sentence: m.sentence, tone: m.tone })
-      });
-      if (!res.ok) throw new Error('failed');
-      loadSaved();
-    } catch {
-      setStatusMsg("Couldn't save that one just now.");
-      setStatusError(true);
-    }
-  }
-
-  async function removeSaved(id: string) {
-    setRemovingIds((prev) => new Set(prev).add(id));
-    setTimeout(async () => {
-      try {
-        const res = await fetch(`/api/mnemonics/${id}`, { method: 'DELETE' });
-        if (!res.ok) throw new Error('failed');
-        await loadSaved();
-      } catch {
-        setStatusMsg("Couldn't remove that just now.");
-        setStatusError(true);
-      } finally {
-        setRemovingIds((prev) => {
-          const next = new Set(prev);
-          next.delete(id);
-          return next;
-        });
-      }
-    }, 220);
-  }
-
-  function copy(text: string, onDone: () => void) {
-    navigator.clipboard.writeText(text).then(onDone);
   }
 
   return (
@@ -233,8 +172,7 @@ export default function Home() {
                 {m.note && <p className="note">{m.note}</p>}
 
                 <div className="candidate-actions">
-                  <button className="text" onClick={() => saveMnemonic(m)}>Save</button>
-                  <CopyButton onCopy={() => copy(m.sentence, () => {})} text={m.sentence} />
+                  <CopyButton text={m.sentence} />
                 </div>
               </div>
             );
@@ -245,27 +183,6 @@ export default function Home() {
         </section>
       )}
 
-      <section className="saved">
-        <h2>Saved</h2>
-        {!savedLoaded ? null : saved.length === 0 ? (
-          <p className="empty">Nothing saved yet. Generate a mnemonic above, then save the ones worth keeping.</p>
-        ) : (
-          saved.map((entry, idx) => (
-            <div
-              className={`saved-item${removingIds.has(entry.id) ? ' removing' : ''}`}
-              key={entry.id}
-              style={{ ['--candidate-color' as any]: PALETTE[idx % PALETTE.length] }}
-            >
-              <div>
-                <p className="sentence">{entry.sentence}</p>
-                <p className="meta">{[entry.tone, entry.topic].filter(Boolean).join(' \u00b7 ')}</p>
-              </div>
-              <button className="text" onClick={() => removeSaved(entry.id)}>Remove</button>
-            </div>
-          ))
-        )}
-      </section>
-
       <footer className="legal">
         <Link href="/privacy">Privacy</Link> &nbsp;&middot;&nbsp; <Link href="/terms">Terms</Link>
       </footer>
@@ -273,7 +190,7 @@ export default function Home() {
   );
 }
 
-function CopyButton({ text, onCopy }: { text: string; onCopy: () => void }) {
+function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
   return (
     <button
@@ -281,7 +198,6 @@ function CopyButton({ text, onCopy }: { text: string; onCopy: () => void }) {
       onClick={() => {
         navigator.clipboard.writeText(text).then(() => {
           setCopied(true);
-          onCopy();
           setTimeout(() => setCopied(false), 1500);
         });
       }}
