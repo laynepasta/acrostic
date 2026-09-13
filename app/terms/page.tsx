@@ -49,18 +49,15 @@ export default function Terms() {
 
       <h2>Your content</h2>
       <p>
-        The topics and item lists you type in, and anything you choose to save, are yours. You
-        are responsible for what you enter, for example not typing in anything private or
+        The topics and item lists you type in are yours. You are responsible for what you enter, for example not typing in anything private or
         sensitive that you would not want processed by a third party AI service, see the
         Privacy Policy for how that works.
       </p>
 
-      <h2>No accounts, no guarantee of permanence</h2>
+      <h2>No accounts, nothing stored</h2>
       <p>
-        Acrostic does not currently have user accounts or logins. Saved mnemonics are stored in
-        a shared database without being tied to an individual identity. Because of that, there
-        is no way to restrict who can see or remove a saved entry, and no guarantee that saved
-        data will be preserved indefinitely if the project changes or is discontinued.
+        Acrostic does not have user accounts or logins, and it does not store what you type in
+        anywhere. Each visit is independent; there is nothing tying one session to another.
       </p>
 
       <h2>No warranty</h2>
