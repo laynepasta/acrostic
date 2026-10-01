@@ -9,14 +9,6 @@ export default function Terms() {
 
       <p>Effective date: 1 Oct, 2026</p>
 
-      <p>
-        This is a genuine starting set of terms reflecting what Acrostic actually does today. It
-        is not legal advice, and it was not written by a lawyer. If Acrostic ever has real users
-        beyond personal, testing, or friends and family use, have someone with legal expertise
-        review it, and fill in the governing law section below with wherever you are actually
-        based.
-      </p>
-
       <h2>Accepting these terms</h2>
       <p>
         By using Acrostic, you agree to these terms. If you do not agree with them, the only
