@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 type Mnemonic = { sentence: string; tone?: string; note?: string };
+type SavedMnemonic = { id: string; topic: string; sentence: string; tone: string; savedAt: number };
 
 const EXAMPLES: Record<string, { topic: string; items: string[] }> = {
   krebs: {
@@ -25,6 +26,7 @@ const EXAMPLES: Record<string, { topic: string; items: string[] }> = {
 };
 
 const PALETTE = ['var(--accent)', 'var(--sage)', 'var(--slate)', 'var(--rose)'];
+const STORAGE_KEY = 'acrostic-saved';
 
 function firstLetter(str: string) {
   const m = str.match(/[a-zA-Z]/);
@@ -47,6 +49,8 @@ export default function Home() {
   const [statusError, setStatusError] = useState(false);
   const [results, setResults] = useState<Mnemonic[]>([]);
   const [theme, setThemeState] = useState<'dark' | 'light'>('dark');
+  const [saved, setSaved] = useState<SavedMnemonic[]>([]);
+  const [removingIds, setRemovingIds] = useState<Set<string>>(new Set());
 
   const items = itemsText.split('\n').map((s) => s.trim()).filter(Boolean);
 
@@ -60,6 +64,15 @@ export default function Home() {
         : 'dark';
     setThemeState(initial);
     document.documentElement.setAttribute('data-theme', initial);
+  }, []);
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw) setSaved(JSON.parse(raw));
+    } catch {
+      // Corrupted or inaccessible storage, just start with an empty list.
+    }
   }, []);
 
   function setTheme(next: 'dark' | 'light') {
@@ -105,6 +118,47 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
+  }
+
+  function saveMnemonic(m: Mnemonic) {
+    const entry: SavedMnemonic = {
+      id: crypto.randomUUID(),
+      topic,
+      sentence: m.sentence,
+      tone: m.tone || '',
+      savedAt: Date.now()
+    };
+
+    setSaved((prev) => {
+      const next = [entry, ...prev];
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        // Storage full or unavailable, the UI still reflects the save for this
+        // visit, it just won't persist past a reload.
+      }
+      return next;
+    });
+  }
+
+  function removeSaved(id: string) {
+    setRemovingIds((prev) => new Set(prev).add(id));
+    setTimeout(() => {
+      setSaved((prev) => {
+        const next = prev.filter((entry) => entry.id !== id);
+        try {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+        } catch {
+          // Nothing to do, the in-memory list is already updated.
+        }
+        return next;
+      });
+      setRemovingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }, 220);
   }
 
   return (
@@ -191,6 +245,7 @@ export default function Home() {
                 {m.note && <p className="note">{m.note}</p>}
 
                 <div className="candidate-actions">
+                  <button className="text" onClick={() => saveMnemonic(m)}>Save</button>
                   <CopyButton text={m.sentence} />
                 </div>
               </div>
@@ -201,6 +256,31 @@ export default function Home() {
           </div>
         </section>
       )}
+
+      <section className="saved">
+        <h2>Saved</h2>
+        <p className="storage-note">
+          Saved mnemonics live in this browser only. If you clear your browser&rsquo;s history or
+          site data, they&rsquo;ll be gone.
+        </p>
+        {saved.length === 0 ? (
+          <p className="empty">Nothing saved yet. Generate a mnemonic above, then save the ones worth keeping.</p>
+        ) : (
+          saved.map((entry, idx) => (
+            <div
+              className={`saved-item${removingIds.has(entry.id) ? ' removing' : ''}`}
+              key={entry.id}
+              style={{ ['--candidate-color' as any]: PALETTE[idx % PALETTE.length] }}
+            >
+              <div>
+                <p className="sentence">{entry.sentence}</p>
+                <p className="meta">{[entry.tone, entry.topic].filter(Boolean).join(' \u00b7 ')}</p>
+              </div>
+              <button className="text" onClick={() => removeSaved(entry.id)}>Remove</button>
+            </div>
+          ))
+        )}
+      </section>
 
       <footer className="legal">
         <div className="theme-toggle">
