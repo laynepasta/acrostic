@@ -7,7 +7,7 @@ export default function Privacy() {
     <div className="legal-page">
       <h1>Privacy Policy</h1>
 
-      <p>Effective date: Sep 13, 2026</p>
+      <p>Effective date: 1 Oct, 2026</p>
 
       <p>
         This is a genuine policy reflecting what Acrostic actually does today, written to be
@@ -19,14 +19,20 @@ export default function Privacy() {
 
       <h2>What Acrostic collects</h2>
       <p>
-        Acrostic does not have user accounts, does not ask for your name or email address, does
-        not use cookies, analytics, or advertising trackers, and does not store anything you
-        type in on its own servers or in any database.
+        Acrostic does not have user accounts, does not ask for your name or email address, and
+        does not use cookies, analytics, or advertising trackers. It does not store anything on
+        its own servers or in any database it controls.
       </p>
       <p>
-        The only thing that happens with what you type is that the topic and the list of items
-        you enter are sent to Google&rsquo;s Gemini API so it can write a mnemonic sentence back.
-        Once that response is shown to you, Acrostic itself keeps nothing from that exchange.
+        The topic and the list of items you type in are sent to Google&rsquo;s Gemini API so it
+        can write a mnemonic sentence back. Once that response is shown to you, Acrostic itself
+        keeps nothing from that exchange on its own servers.
+      </p>
+      <p>
+        If you click Save on a generated mnemonic, it is stored only in your own browser, using
+        its built in local storage, not sent to or kept on any server. That also means it is only
+        available on that device and in that browser, and clearing your browser&rsquo;s history
+        or site data will delete it, since there is no copy anywhere else to recover it from.
       </p>
 
       <h2>A note on the free tier</h2>
