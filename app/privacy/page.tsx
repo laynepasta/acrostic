@@ -9,14 +9,6 @@ export default function Privacy() {
 
       <p>Effective date: 1 Oct, 2026</p>
 
-      <p>
-        This is a genuine policy reflecting what Acrostic actually does today, written to be
-        honest and specific rather than generic. It is not legal advice, and it was not written
-        by a lawyer. If Acrostic ever has real users beyond personal, testing, or friends and
-        family use, have someone with legal expertise review it, since privacy requirements vary
-        by where your users are located.
-      </p>
-
       <h2>What Acrostic collects</h2>
       <p>
         Acrostic does not have user accounts, does not ask for your name or email address, and
