@@ -7,7 +7,7 @@ export default function Terms() {
     <div className="legal-page">
       <h1>Terms and Conditions</h1>
 
-      <p>Effective date: Sep 13, 2026</p>
+      <p>Effective date: 1 Oct, 2026</p>
 
       <p>
         This is a genuine starting set of terms reflecting what Acrostic actually does today. It
@@ -54,10 +54,12 @@ export default function Terms() {
         Privacy Policy for how that works.
       </p>
 
-      <h2>No accounts, nothing stored</h2>
+      <h2>No accounts, nothing stored on our end</h2>
       <p>
-        Acrostic does not have user accounts or logins, and it does not store what you type in
-        anywhere. Each visit is independent; there is nothing tying one session to another.
+        Acrostic does not have user accounts or logins. Anything you choose to save is stored
+        only in your own browser&rsquo;s local storage, not on any server. See the Privacy
+        Policy for what that means in practice, including that clearing your browser&rsquo;s data
+        will delete it, with no way to recover it.
       </p>
 
       <h2>No warranty</h2>
